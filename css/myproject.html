@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dino Runner</title>
+<style>
+:root{--bg:#e9efe4;--ink:#2c3a2a;--ground:#8a9a82;--sun:#f2c879;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b2419;--ink:#cfe0c4;--ground:#4d5e47;--sun:#a8814a}}
+:root[data-theme="dark"]{--bg:#1b2419;--ink:#cfe0c4;--ground:#4d5e47;--sun:#a8814a}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;display:flex;flex-direction:column;align-items:center;justify-content:center;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#wrap{width:100%;max-width:720px;padding:12px}
+canvas{width:100%;height:auto;display:block;border-bottom:2px solid var(--ground)}
+.hud{display:flex;justify-content:space-between;font-size:18px;margin-bottom:8px}
+p{margin:12px 0 0;text-align:center;font-size:15px;opacity:.8}
+button{font:inherit;background:var(--ink);color:var(--bg);border:0;border-radius:6px;padding:10px 22px;margin-top:12px;cursor:pointer}
+button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="hud"><span>Score <b id="s">0</b></span><span>Best <b id="b">0</b></span></div>
+  <canvas id="c" width="720" height="240" aria-label="Dino runner game"></canvas>
+  <p id="msg">Tap, click or press Space to jump. Down arrow to duck.</p>
+  <p><button id="btn">Start</button></p>
+</div>
+<script>
+(function(){
+var cv=document.getElementById('c'),ctx=cv.getContext('2d');
+var W=720,H=240,G=200;
+var ink=function(){return getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()||'#2c3a2a'};
+var best=0,score=0,speed,running=false,over=false,t=0,dino,obs,clouds,spawn;
+var sEl=document.getElementById('s'),bEl=document.getElementById('b'),msg=document.getElementById('msg'),btn=document.getElementById('btn');
+function reset(){
+  dino={x:50,y:G,vy:0,w:34,h:40,duck:false};
+  obs=[];clouds=[{x:200,y:50},{x:520,y:80}];
+  speed=6;score=0;t=0;spawn=60;over=false;
+}
+function jump(){
+  if(over||!running){start();return}
+  if(dino.y>=G){dino.vy=-13.5}
+}
+function start(){
+  if(running&&!over)return;
+  reset();running=true;msg.textContent='Go!';btn.textContent='Restart';loop();
+}
+function end(){
+  over=true;running=false;
+  best=Math.max(best,Math.floor(score));bEl.textContent=best;
+  msg.textContent='Game over. Tap, press Space or Restart to try again.';
+}
+function hit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
+function update(){
+  t++;score+=speed*0.04;speed=Math.min(14,6+score/120);
+  dino.vy+=0.75;dino.y+=dino.vy;
+  if(dino.y>G){dino.y=G;dino.vy=0}
+  spawn--;
+  if(spawn<=0){
+    var r=Math.random();
+    if(r<0.25&&score>60){obs.push({type:'bird',x:W+20,w:34,h:22,yy:G-(Math.random()<0.5?48:22)-22})}
+    else{var n=1+(Math.random()<0.3?1:0),h=28+Math.floor(Math.random()*22);obs.push({type:'cactus',x:W+20,w:16*n+6,h:h,n:n,yy:G-h})}
+    spawn=Math.max(35,Math.floor((70+Math.random()*60)*6/speed));
+  }
+  obs.forEach(function(o){o.x-=speed});
+  obs=obs.filter(function(o){return o.x+o.w>-10});
+  clouds.forEach(function(c){c.x-=0.5;if(c.x<-60){c.x=W+40;c.y=30+Math.random()*60}});
+  var dh=dino.duck&&dino.y>=G?24:dino.h;
+  var db={x:dino.x+4,y:dino.y-dh+4,w:dino.w-10,h:dh-8};
+  for(var i=0;i<obs.length;i++){
+    var o=obs[i];
+    if(hit(db,{x:o.x+3,y:o.yy+3,w:o.w-6,h:o.h-6})){end();return}
+  }
+  sEl.textContent=Math.floor(score);
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  var c=ink();
+  ctx.fillStyle=c;ctx.strokeStyle=c;
+  ctx.globalAlpha=0.18;
+  clouds.forEach(function(k){ctx.fillRect(k.x,k.y,44,8);ctx.fillRect(k.x+10,k.y-6,24,6)});
+  ctx.globalAlpha=0.35;
+  for(var i=0;i<14;i++){var gx=((i*61-t*speed*0.9)%W+W)%W;ctx.fillRect(gx,G+8+(i%3)*9,6,2)}
+  ctx.globalAlpha=1;
+  var dh=dino.duck&&dino.y>=G?24:dino.h,dw=dino.duck&&dino.y>=G?44:dino.w,top=dino.y-dh;
+  // body
+  ctx.fillRect(dino.x,top+(dh>30?14:6),dw-10,dh-(dh>30?14:6)-6);
+  // head
+  if(dh>30){ctx.fillRect(dino.x+12,top,22,16)}else{ctx.fillRect(dino.x+dw-18,top,20,14)}
+  // tail
+  ctx.fillRect(dino.x-8,top+(dh>30?18:10),10,6);
+  // legs
+  var step=Math.floor(t/5)%2;
+  if(dino.y<G){ctx.fillRect(dino.x+6,dino.y-6,6,6);ctx.fillRect(dino.x+18,dino.y-6,6,6)}
+  else{ctx.fillRect(dino.x+6,dino.y-(step?6:3),6,step?6:3);ctx.fillRect(dino.x+18,dino.y-(step?3:6),6,step?3:6)}
+  // eye
+  ctx.save();ctx.globalCompositeOperation='destination-out';
+  if(dh>30)ctx.fillRect(dino.x+26,top+4,4,4);else ctx.fillRect(dino.x+dw-8,top+3,4,4);
+  ctx.restore();
+  // obstacles
+  obs.forEach(function(o){
+    if(o.type==='cactus'){
+      for(var k=0;k<o.n;k++){
+        var cx=o.x+k*16;
+        ctx.fillRect(cx+5,o.yy,6,o.h);
+        ctx.fillRect(cx,o.yy+8,5,4);ctx.fillRect(cx,o.yy+4,3,8);
+        ctx.fillRect(cx+11,o.yy+12,5,4);ctx.fillRect(cx+13,o.yy+8,3,8);
+      }
+    }else{
+      var f=Math.floor(t/8)%2;
+      ctx.fillRect(o.x+6,o.yy+8,22,8);ctx.fillRect(o.x,o.yy+10,8,4);
+      ctx.fillRect(o.x+10,f?o.yy:o.yy+14,12,8);
+    }
+  });
+  if(over){ctx.font='bold 28px Georgia,serif';ctx.textAlign='center';ctx.fillText('Game over',W/2,100)}
+}
+function loop(){
+  if(!running)return;
+  update();draw();
+  if(running)requestAnimationFrame(loop);else draw();
+}
+document.addEventListener('keydown',function(e){
+  if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump()}
+  if(e.code==='ArrowDown'){e.preventDefault();if(dino)dino.duck=true}
+});
+document.addEventListener('keyup',function(e){if(e.code==='ArrowDown'&&dino)dino.duck=false});
+cv.addEventListener('pointerdown',function(e){e.preventDefault();jump()});
+btn.addEventListener('click',function(){over=true;running=false;start();btn.blur()});
+reset();draw();
+})();
+</script>
+</body>
+</html>

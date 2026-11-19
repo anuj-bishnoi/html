@@ -1,0 +1,34 @@
+/* css selector
+1. type secelector
+2. attribute selector
+3. id selector
+4. class selector
+5. uinversal selector
+6. combinator selector
+*/
+
+footer{
+    background-color: rgb(120, 162, 167);
+}/*  this is a type selector */
+
+a[href="https://www.google.com/?client=safari&channel=mac_bm"]{ 
+    background-color: rgb(131, 165, 233);
+} /*this is a attribute selector.*/
+
+#art1{
+    color:aquamarine
+}/* color is use to change the text color. This is a id selector.*/
+
+.a1{
+    background-color: rgb(226, 115, 239);
+}/* This is class selection.*/
+
+/*Universal selector*/
+*{
+    background-color: darkgrey;
+}/*apply to all of the page*/
+/*uiversal selector have the lest priority*/
+
+#art1 h3{
+    color: blanchedalmond;
+}

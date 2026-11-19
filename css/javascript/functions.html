@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function greetings(){
+            console.log("Good Noon.")
+        }
+        greetings();
+        function addition(a,b,c){
+            return a+b+c
+        }
+        console.log("The sum is"+ addition(2,4,5));
+
+        const substration = (x,y) => {console.log(x-y)};
+
+        substration(65,76);
+
+        const greeting = (z) => {console.log(z)};
+
+        greeting("Good Afternoon");
+
+        //string method. 
+
+        const str1 = "  java script"  ;
+        const str2 = "cse 326";
+
+        console.log("We are studing" + str1 + "in" + str2);
+
+         // string template. 
+
+         console.log(str1.indexOf("t"));
+         console.log(str1.charAt("5"));
+         console.log(str1.length);
+         console.log(str1.trim());
+         console.log(str1.trim().length);
+         console.log(str1.toLowerCase());
+         console.log(str1.toUpperCase());
+         console.log(str1.includes("t"));
+         console.log(str1.slice(2,5));
+         console.log(str1.replace("j","ta"));
+         
+         // array method. 
+
+         let array1 = ["a","b","c","d"];
+         array1.push("grapes"); // add a elelment to the last. 
+         console.log(array1);
+         array1.unshift("mango"); // add a element to the starting. 
+         console.log(array1);
+         array1.pop(); // delete element from the last. 
+         console.log(array1);
+         array1.shift(); // delete element from the start. 
+         console.log(array1.slice(1,3));
+         array1.splice(2,2,"Tomato","Potato");
+         console.log(array1);
+
+
+        //objects. 
+
+        let student = {
+            rollno:29,
+            course:"cse 326",
+            name:"anuj",
+            info: function(){
+                console.log("the state of the student is rajasthan")
+            }
+        }
+        console.log("the roll no of " + student.name + " is " + student.rollno)
+        student.info()
+
+
+        function book(name,publisher){
+            this.name = name;
+            this.publisher = publisher;
+        }
+
+        const b1 = new book("python" , "person");
+        console.log(b1.name,b1.publisher);
+        const b2 = new book("DSA" , "BPB");
+        console.log(b2.name,b2.publisher);
+
+        let marks = 180;
+        
+
+        try{
+        if (marks<0 || marks>100){
+            throw new Error("Invalid input")
+            
+        } 
+        console.log(marks);
+    }
+        catch(err){
+            console.log(err.message);
+        }
+
+        finally{
+            console.log("Done");
+        }
+    </script>
+</body>
+</html>
