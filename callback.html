@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <!--Higher order fxn
+    it is a fxn hat takes another fxn as a argument,returns a fxn or does both
+    Call back
+    callback is a fxn passed to another fxn to be invoked by that fxn. 
+    -->
+    <script>
+        function caculate(a,b){
+            return a+b
+        }
+        function highorder(callback){
+            console.log(callback(2,3))
+        }
+        highorder(caculate)
+    </script>
+</body>
+</html>
