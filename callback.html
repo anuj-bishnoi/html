@@ -10,15 +10,62 @@
     it is a fxn hat takes another fxn as a argument,returns a fxn or does both
     Call back
     callback is a fxn passed to another fxn to be invoked by that fxn. 
+    DOM -- document object model. 
+    get element by id()
+    query selecter()
+    query selecterall()
+    get element by classname()
+    get element by tagname()
     -->
+    <h1 id="head1">This is a heading</h1>
+    <p class="p1">this is to demonstrate ger element by classname</p>
+    <p class="p1">para</p>
+    <p class="p1">this is to demonstrate</p>
+    <input type="button" name="btn1" id="btn1" value="sumbit">
+    <div style="width: 150px;height: 200px;color: rgb(99, 34, 34);" id="div1"> 
+        This is a div section
+    </div>
     <script>
-        function caculate(a,b){
-            return a+b
+
+        let d1 = document.getElementById("div1");
+
+        d1.addEventListener("mouseover",()=>{
+            d1.style.backgroundColor = "Green";
+        })
+
+        let button1 = document.getElementById("btn1");
+        button1.onclick= function(){
+            // alert("Welcome to my page");
+            let h1 = document.getElementById("head1");
+            h1.innerHTML = "<i>Hello<i>"; // to treat tag as tag inside the colen use innerhtml
+            h1.style.color = "yellow";
         }
-        function highorder(callback){
-            console.log(callback(2,3))
-        }
-        highorder(caculate)
+
+        let heading1 = document.getElementById("head1");
+        console.log(heading1.textContent);
+        let para1 = document.getElementsByClassName("p1");
+        console.log(para1.length);
+
+        let para2 = document.getElementsByTagName("p");
+        console.log(para2.length);
+
+        let para3 = document.querySelector(".p1");
+        console.log(para3.textContent);
+
+        let para4 = document.querySelectorAll(".p1");
+        console.log(para4[0].textContent);
+        console.log(para4[1].textContent);
+        console.log(para4[2].textContent);
+
+
+
+        // function caculate(a,b){
+        //     return a+b
+        // }
+        // function highorder(callback){
+        //     console.log(callback(2,3))
+        // }
+        // highorder(caculate)
     </script>
 </body>
 </html>
